@@ -52,6 +52,7 @@ import gamedata_index  # noqa: E402
 from file_mode import published_mode  # noqa: E402
 from replace_retry import replace as replace_retry  # noqa: E402
 import gamedata_xml  # noqa: E402
+from os_error_text import os_error_text  # noqa: E402
 
 LIST_ENTRY = re.compile(r"<filename>\s*\$\(common\)/movies/([^<]+?\.bk2)\s*</filename>", re.I)
 FAMILY_TAIL = re.compile(r"(_?\d+|_?(4k|left|right|top|topleft|topright|side|high|low|medium|light|dark|close|far))+$",
@@ -456,17 +457,17 @@ def main(argv=None):
     try:
         names = read_mount_lists(a.mount)
     except (OSError, ValueError) as error:
-        print(f"bink_names: error: {error}", file=sys.stderr)
+        print(f"bink_names: error: {os_error_text(error)}", file=sys.stderr)
         return 1
     try:
         streams = load_streams(a.source, skip_report=a.out if a.out and os.path.isfile(a.out) else None)
     except (OSError, csv.Error, ValueError) as error:
-        print(f"bink_names: error: {a.source}: {error}", file=sys.stderr)
+        print(f"bink_names: error: {a.source}: {os_error_text(error)}", file=sys.stderr)
         return 1
     try:
         pins = load_pins(a.pins)
     except (OSError, csv.Error, ValueError) as error:
-        print(f"bink_names: error: {a.pins}: {error}", file=sys.stderr)
+        print(f"bink_names: error: {a.pins}: {os_error_text(error)}", file=sys.stderr)
         return 1
     try:
         rows, unmatched = name_streams(names, streams, pins, a.max_skip)
